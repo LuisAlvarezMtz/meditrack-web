@@ -30,7 +30,7 @@ export function renderPerfilPaciente(elements, paciente) {
 
     elements.inputName.value = String(paciente?.name || paciente?.nombre || "").trim();
     elements.inputPhone.value = sanitizePhoneValue(paciente?.phoneNumber || "");
-    elements.inputEdad.value = paciente?.edad ?? "";
+    elements.inputEdad.value = paciente?.age ?? paciente?.edad ?? "";
     elements.inputCurp.value = String(paciente?.curp || "").trim();
 }
 
@@ -47,19 +47,19 @@ export function setPerfilPacienteEditMode(elements, isEditing) {
 export function resetPerfilPacienteForm(elements, paciente, enfermedades) {
     elements.inputName.value = String(paciente?.name || paciente?.nombre || "").trim();
     elements.inputPhone.value = sanitizePhoneValue(paciente?.phoneNumber || "");
-    elements.inputEdad.value = paciente?.edad ?? "";
+    elements.inputEdad.value = paciente?.age ?? paciente?.edad ?? "";
     elements.inputCurp.value = String(paciente?.curp || "").trim();
 }
 
 export function getPerfilPacienteDTO(elements, enfermedades) {
     return {
-        nombre: String(elements.inputName.value || "").trim(), // 🔥 FIX
+        name: String(elements.inputName.value || "").trim(),
         phoneNumber: sanitizePhoneValue(elements.inputPhone.value),
-        edad: Number(elements.inputEdad.value),
+        age: Number(elements.inputEdad.value),
         curp: elements.inputCurp.value.trim()
             ? elements.inputCurp.value.trim().toUpperCase()
             : null,
-        enfermedadesCronicas: enfermedades.length ? [...enfermedades] : null
+        chronicDiseases: enfermedades.length ? [...enfermedades] : null
     };
 }
 

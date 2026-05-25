@@ -2,11 +2,11 @@ import { API_BASE_URL } from "../core/config.js";
 import { authFetch } from "../core/http.js";
 import { extraerMensajeError } from "../utils/http-error.util.js";
 
-const BASE_URL = `${API_BASE_URL}/medicinas`;
+const BASE_URL = `${API_BASE_URL}/medicines`;
 
 // Obtener medicinas de un paciente vinculado (cuidador)
 export async function obtenerMedicinasPaciente(pacienteId) {
-    const response = await authFetch(`${BASE_URL}/paciente/${pacienteId}`);
+    const response = await authFetch(`${BASE_URL}/patient/${pacienteId}`);
     if (!response.ok) {
         const msg = await extraerMensajeError(response);
         throw new Error(msg || "Error al obtener las medicinas del paciente");
@@ -16,7 +16,7 @@ export async function obtenerMedicinasPaciente(pacienteId) {
 
 // Registrar nueva medicina
 export async function registrarMedicina(dto) {
-    const response = await authFetch(`${BASE_URL}/registrar`, {
+    const response = await authFetch(`${BASE_URL}/register`, {
         method: "POST",
         body: JSON.stringify(dto)
     });
@@ -29,7 +29,7 @@ export async function registrarMedicina(dto) {
 
 // Obtener medicinas del paciente actual
 export async function obtenerMisMedicinas() {
-    const response = await authFetch(`${BASE_URL}/mias`);
+    const response = await authFetch(`${BASE_URL}/my-medicines`);
 
     if (!response.ok) {
         const msg = await extraerMensajeError(response);

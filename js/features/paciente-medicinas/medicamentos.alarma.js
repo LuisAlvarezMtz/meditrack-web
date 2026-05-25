@@ -28,9 +28,9 @@ function _mostrarModoCrear() {
 
 function _mostrarModoVer(config) {
     title.textContent = "Configuración de alarma";
-    document.getElementById("fechaInicio").value = config.fechaInicio?.slice(0, 16) ?? "";
-    document.getElementById("fechaFin").value = config.fechaFin?.slice(0, 16) ?? "";
-    document.getElementById("frecuenciaHoras").value = config.frecuenciaHoras;
+    document.getElementById("fechaInicio").value = (config.startDate ?? config.fechaInicio)?.slice(0, 16) ?? "";
+    document.getElementById("fechaFin").value = (config.endDate ?? config.fechaFin)?.slice(0, 16) ?? "";
+    document.getElementById("frecuenciaHoras").value = config.frequencyHours ?? config.frecuenciaHoras;
     ["fechaInicio", "fechaFin", "frecuenciaHoras"].forEach(id => {
         document.getElementById(id).disabled = true;
     });
@@ -99,18 +99,18 @@ export function initAlarmaModal() {
         btnGuardar.textContent = "Guardando...";
 
         const dto = {
-            medicinaId: Number(document.getElementById("alarmaMedicinaId").value),
-            fechaInicio: inicioEl.value,
-            fechaFin: finEl.value,
-            frecuenciaHoras: Number(frecEl.value)
+            medicineId: Number(document.getElementById("alarmaMedicinaId").value),
+            startDate: inicioEl.value,
+            endDate: finEl.value,
+            frequencyHours: Number(frecEl.value)
         };
 
         try {
             const nuevaConfig = await crearAlarmaConfig(dto);
 
             // Actualizar estado local para que el ícono refleje la alarma sin recargar
-            const medicinaId = dto.medicinaId;
-            const yaExiste = medicamentosState.alarmasConfig.findIndex(a => a.medicinaId == medicinaId);
+            const medicinaId = dto.medicineId;
+            const yaExiste = medicamentosState.alarmasConfig.findIndex(a => (a.medicineId ?? a.medicinaId) == medicinaId);
             const configGuardada = nuevaConfig ?? { ...dto };
             if (yaExiste >= 0) {
                 medicamentosState.alarmasConfig[yaExiste] = configGuardada;

@@ -1,9 +1,9 @@
-export const API_BASE_URL = "https://meditrackwebappback.onrender.com";
+//export const API_BASE_URL = "https://meditrackwebappback.onrender.com";
 
-//export const API_BASE_URL = "http://localhost:8080";
+export const API_BASE_URL = "http://localhost:8080";
 
 export const AUTH_ENDPOINTS = {
-    LOGIN: `${API_BASE_URL}/auth/acceder`
+    LOGIN: `${API_BASE_URL}/auth/login`
 };
 
 export const STORAGE_KEYS = {
@@ -14,8 +14,8 @@ export const STORAGE_KEYS = {
 };
 
 export const ROLES = Object.freeze({
-    PACIENTE: "PACIENTE",
-    CUIDADOR: "CUIDADOR"
+    PACIENTE: "PATIENT",
+    CUIDADOR: "CAREGIVER"
 });
 
 export const ROUTES = Object.freeze({

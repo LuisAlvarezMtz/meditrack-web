@@ -30,10 +30,11 @@ form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
     const paciente = {
-        name: form.name.value.trim(),
-        phoneNumber: sanitizePhoneValue(form.phoneNumber.value),
-        edad: Number(form.edad.value),
-        password: form.password.value
+        name: form.elements.name.value.trim(),
+        phoneNumber: sanitizePhoneValue(form.elements.phoneNumber.value),
+        age: Number(form.elements.edad.value),
+        password: form.elements.password.value,
+        chronicDiseases: []
     };
 
     if (paciente.phoneNumber.length !== PHONE_DIGITS) {
@@ -47,7 +48,7 @@ form.addEventListener("submit", async (e) => {
     }
 
     try {
-        const response = await guardedFetch(`${API_BASE_URL}/pacientes/registro`, {
+        const response = await guardedFetch(`${API_BASE_URL}/patients/register`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"

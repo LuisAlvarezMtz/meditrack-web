@@ -21,9 +21,9 @@ function _mostrarModoCrear(elements) {
 function _mostrarModoVer(elements, config, pacienteId) {
     elements.modalAlarmaTitle.textContent = "Configuración de alarma";
     _clearAlarmaErrors(elements);
-    elements.alarmaFechaInicio.value = config.fechaInicio?.slice(0, 16) ?? "";
-    elements.alarmaFechaFin.value = config.fechaFin?.slice(0, 16) ?? "";
-    elements.alarmaFrecuenciaHoras.value = config.frecuenciaHoras;
+    elements.alarmaFechaInicio.value = (config.startDate ?? config.fechaInicio)?.slice(0, 16) ?? "";
+    elements.alarmaFechaFin.value = (config.endDate ?? config.fechaFin)?.slice(0, 16) ?? "";
+    elements.alarmaFrecuenciaHoras.value = config.frequencyHours ?? config.frecuenciaHoras;
     [elements.alarmaFechaInicio, elements.alarmaFechaFin, elements.alarmaFrecuenciaHoras].forEach(el => {
         el.disabled = true;
     });
@@ -102,19 +102,19 @@ export function createCuidadorAlarmaModule({ elements, state, notify, onAlarmaGu
             elements.btnGuardarAlarma.textContent = "Guardando...";
 
             const dto = {
-                medicinaId: Number(elements.alarmaMedicinaId.value),
-                pacienteId: Number(state.pacienteId),
-                fechaInicio: inicioEl.value,
-                fechaFin: finEl.value,
-                frecuenciaHoras: Number(frecEl.value)
+                medicineId: Number(elements.alarmaMedicinaId.value),
+                patientId: Number(state.pacienteId),
+                startDate: inicioEl.value,
+                endDate: finEl.value,
+                frequencyHours: Number(frecEl.value)
             };
 
             try {
                 const nuevaConfig = await crearAlarmaConfig(dto);
-                const medicinaId = dto.medicinaId;
+                const medicinaId = dto.medicineId;
                 const configGuardada = nuevaConfig ?? { ...dto };
 
-                const yaExiste = state.alarmasConfig.findIndex(a => Number(a.medicinaId) === medicinaId);
+                const yaExiste = state.alarmasConfig.findIndex(a => Number(a.medicineId ?? a.medicinaId) === medicinaId);
                 if (yaExiste >= 0) {
                     state.alarmasConfig[yaExiste] = configGuardada;
                 } else {
@@ -141,7 +141,7 @@ export function createCuidadorAlarmaModule({ elements, state, notify, onAlarmaGu
         elements.alarmaMedicinaId.value = medicinaId;
         elements.modalAlarmaMedicinaNombre.textContent = medicinaNombre;
 
-        const config = state.alarmasConfig.find(a => Number(a.medicinaId) === Number(medicinaId));
+        const config = state.alarmasConfig.find(a => Number(a.medicineId ?? a.medicinaId) === Number(medicinaId));
         if (config) {
             _mostrarModoVer(elements, config, state.pacienteId);
         } else {

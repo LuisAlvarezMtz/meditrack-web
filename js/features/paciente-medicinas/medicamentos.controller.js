@@ -92,9 +92,9 @@ export function initMedicamentos() {
         // Caso Alarma 
         if (e.target.classList.contains("btn-reminder")) {
             const med = medicamentosState.lista.find(m => m.id == id);
-            const config = medicamentosState.alarmasConfig.find(a => a.medicinaId == id) ?? null;
+            const config = medicamentosState.alarmasConfig.find(a => (a.medicineId ?? a.medicinaId) == id) ?? null;
             import("./medicamentos.alarma.js").then(module => {
-                module.abrirModalAlarma(id, med?.nombre || "", config);
+                module.abrirModalAlarma(id, med?.name ?? med?.nombre ?? "", config);
             });
         }
     });

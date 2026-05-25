@@ -2,14 +2,14 @@ import { API_BASE_URL } from "../core/config.js";
 import { authFetch } from "../core/http.js";
 import { extraerMensajeError } from "../utils/http-error.util.js";
 
-const BASE_URL = `${API_BASE_URL}/cuidadores`;
+const BASE_URL = `${API_BASE_URL}/caregivers`;
 
 /**
  * Obtener datos del cuidador autenticado
- * GET /cuidadores/mis-datos
+ * GET /caregivers/my-data
  */
 export async function obtenerMisDatosCuidador() {
-    const response = await authFetch(`${BASE_URL}/mis-datos`);
+    const response = await authFetch(`${BASE_URL}/my-data`);
 
     if (!response.ok) {
         const msg = await extraerMensajeError(response);
@@ -20,10 +20,10 @@ export async function obtenerMisDatosCuidador() {
 }
 /**
  * Obtener pacientes asociados al cuidador
- * GET /cuidadores/pacientes-del-cuidador
+ * GET /caregivers/patients
  */
 export async function obtenerPacientesDelCuidador() {
-    const response = await authFetch(`${BASE_URL}/pacientes-del-cuidador`);
+    const response = await authFetch(`${BASE_URL}/patients`);
 
     if (!response.ok) {
         const msg = await extraerMensajeError(response);
@@ -34,10 +34,10 @@ export async function obtenerPacientesDelCuidador() {
 }
 /**
  * Registrar paciente desde cuidador
- * POST /cuidadores/registrar-paciente
+ * POST /caregivers/register-patient
  */
 export async function registrarPacienteDesdeCuidador(dto) {
-    const response = await authFetch(`${BASE_URL}/registrar-paciente`, {
+    const response = await authFetch(`${BASE_URL}/register-patient`, {
         method: "POST",
         body: JSON.stringify(dto)
     });
@@ -52,10 +52,10 @@ export async function registrarPacienteDesdeCuidador(dto) {
 
 /**
  * Obtener perfil de un paciente por ID
- * GET /cuidadores/pacientes/{id}
+ * GET /caregivers/patients/{id}
  */
 export async function obtenerPacientePorId(id) {
-    const response = await authFetch(`${BASE_URL}/pacientes/${id}`);
+    const response = await authFetch(`${BASE_URL}/patients/${id}`);
 
     if (!response.ok) {
         const msg = await extraerMensajeError(response);
@@ -67,10 +67,10 @@ export async function obtenerPacientePorId(id) {
 
 /**
  * Actualizar datos del cuidador autenticado
- * PUT /cuidadores/actualizar
+ * PUT /caregivers/update
  */
 export async function actualizarMisDatosCuidador(dto) {
-    const response = await authFetch(`${BASE_URL}/actualizar`, {
+    const response = await authFetch(`${BASE_URL}/update`, {
         method: "PUT",
         body: JSON.stringify(dto)
     });
@@ -85,20 +85,12 @@ export async function actualizarMisDatosCuidador(dto) {
 
 /**
  * Actualizar paciente desde cuidador
- * PUT /cuidadores/pacientes/{id}
+ * PUT /caregivers/patients/{id}
  */
 export async function actualizarPacienteDesdeCuidador(id, dto) {
-    const payload = { ...dto };
-
-    // Compatibilidad: el backend espera "nombre" en vez de "name".
-    if (payload.name && !payload.nombre) {
-        payload.nombre = payload.name;
-        delete payload.name;
-    }
-
-    const response = await authFetch(`${BASE_URL}/pacientes/${id}`, {
+    const response = await authFetch(`${BASE_URL}/patients/${id}`, {
         method: "PUT",
-        body: JSON.stringify(payload)
+        body: JSON.stringify(dto)
     });
 
     if (!response.ok) {
@@ -111,10 +103,10 @@ export async function actualizarPacienteDesdeCuidador(id, dto) {
 
 /**
  * Desvincular paciente del cuidador autenticado
- * DELETE /cuidadores/{id}/desvincular
+ * DELETE /caregivers/{id}/unlink
  */
 export async function desvincularPacienteDelCuidador(id) {
-    const response = await authFetch(`${BASE_URL}/${id}/desvincular`, {
+    const response = await authFetch(`${BASE_URL}/${id}/unlink`, {
         method: "DELETE"
     });
 

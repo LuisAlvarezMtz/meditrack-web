@@ -32,7 +32,7 @@ form.addEventListener("submit", async (e) => {
     const cuidador = {
         name: form.name.value,
         phoneNumber: sanitizePhoneValue(form.phoneNumber.value),
-        ocupacion: form.ocupacion.value,
+        occupation: form.ocupacion.value,
         password: form.password.value
     };
 
@@ -47,7 +47,7 @@ form.addEventListener("submit", async (e) => {
     }
 
     try {
-        const response = await guardedFetch(`${API_BASE_URL}/cuidadores/registro`, {
+        const response = await guardedFetch(`${API_BASE_URL}/caregivers/register`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(cuidador)

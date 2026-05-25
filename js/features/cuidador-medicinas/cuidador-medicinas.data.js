@@ -30,7 +30,7 @@ export async function obtenerDetalleMedicina(id) {
 export async function registrarMedicinaPaciente(dto, pacienteId) {
     return registrarMedicinaService({
         ...dto,
-        pacienteId
+        patientId: Number(pacienteId)
     });
 }
 

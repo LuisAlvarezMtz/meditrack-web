@@ -2,6 +2,27 @@ import { alarmasState } from "./alarmas.state.js";
 import { alarmaStatus, fmt, fmtShort } from "./alarmas.utils.js";
 
 const STATUS_LABEL = { active: "Activo", paused: "Pausado", ended: "Finalizado" };
+const ALARM_STATUS_LABEL = {
+  PENDING: "Pendiente",
+  TAKEN: "Tomada",
+  OMITTED: "Omitida"
+};
+
+function getTakeStatus(toma = {}) {
+  return toma.status ?? toma.estado ?? "";
+}
+
+function getScheduledAt(toma = {}) {
+  return toma.scheduledAt ?? toma.fechaHora;
+}
+
+function getMedicineName(toma = {}) {
+  return toma.medicineName ?? toma.medicinaNombre ?? "Medicamento";
+}
+
+function getAlarmConfigId(toma = {}) {
+  return toma.alarmConfigId ?? toma.alarmaConfigId;
+}
 
 function countTotal(alarm) {
   const start = new Date(alarm.inicio);
@@ -44,10 +65,10 @@ export function updateStats() {
 
   const now = new Date();
   const nexts = alarmasState.todayAlarms
-    .filter(t => new Date(t.fechaHora) >= now)
+    .filter(t => new Date(getScheduledAt(t)) >= now)
     .map(t => ({
-      t: new Date(t.fechaHora),
-      name: t.medicinaNombre
+      t: new Date(getScheduledAt(t)),
+      name: getMedicineName(t)
     }))
     .sort((a, b) => a.t - b.t);
 
@@ -86,27 +107,22 @@ function buildAlarmItemHtml(a) {
     </div>`;
 }
 
-const ESTADO_LABEL = {
-  PENDIENTE: "Pendiente",
-  TOMADA:    "Tomada",
-  OMITIDA:   "Omitida"
-};
-
 function buildDetailHtml(a) {
   const st    = alarmaStatus(a);
   const total = countTotal(a);
 
   const tomasHoy = alarmasState.todayAlarms.filter(
-    t => Number(t.alarmaConfigId) === Number(a.id)
+    t => Number(getAlarmConfigId(t)) === Number(a.id)
   );
 
   const pillsHtml = tomasHoy.length
     ? tomasHoy.map(t => {
-        const hora = new Date(t.fechaHora).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
-        const label = ESTADO_LABEL[t.estado] ?? t.estado ?? "";
+        const status = getTakeStatus(t);
+        const hora = new Date(getScheduledAt(t)).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
+        const label = ALARM_STATUS_LABEL[status] ?? status ?? "";
         let extraClass = "";
-        if (t.estado === "TOMADA") extraClass = " next-pill-tomada";
-        else if (t.estado === "OMITIDA") extraClass = " next-pill-omitida";
+        if (status === "TAKEN") extraClass = " next-pill-tomada";
+        else if (status === "OMITTED") extraClass = " next-pill-omitida";
         return `<span class="next-pill${extraClass}">${hora}${label ? " · " + label : ""}</span>`;
       }).join("")
     : `<div class="no-next">

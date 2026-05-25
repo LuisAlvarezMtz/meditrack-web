@@ -2,12 +2,12 @@ import { API_BASE_URL } from "../core/config.js";
 import { authFetch } from "../core/http.js";
 import { extraerMensajeError } from "../utils/http-error.util.js";
 
-const BASE_URL = `${API_BASE_URL}/pacientes`;
+const BASE_URL = `${API_BASE_URL}/patients`;
 
 
 //Obtener datos del paciente 
 export async function obtenerMisDatosPaciente() {
-    const response = await authFetch(`${BASE_URL}/perfil`);
+    const response = await authFetch(`${BASE_URL}/profile`);
 
     if (response.status === 401 || response.status === 403) {
         return null;
@@ -27,7 +27,7 @@ export async function obtenerMisDatosPaciente() {
 //Vincular cuidador al paciente usando codigo unico
 export async function vincularCuidadorPaciente(codigo) {
     const response = await authFetch(
-        `${BASE_URL}/cuidador?codigo=${encodeURIComponent(codigo)}`,
+        `${BASE_URL}/caregiver?code=${encodeURIComponent(codigo)}`,
         {
             method: "POST"
         }
@@ -47,7 +47,7 @@ export async function vincularCuidadorPaciente(codigo) {
 //Buscar datos de cuidador por codigo
 export async function buscarCuidadorPorCodigo(codigo) {
     const response = await authFetch(
-        `${BASE_URL}/cuidador?codigo=${encodeURIComponent(codigo)}`,
+        `${BASE_URL}/caregiver?code=${encodeURIComponent(codigo)}`,
         { method: "GET" }
     );
 
@@ -64,7 +64,7 @@ export async function buscarCuidadorPorCodigo(codigo) {
 
 //Desvincular cuidador del paciente
 export async function desvincularCuidadorPaciente() {
-    const response = await authFetch(`${BASE_URL}/cuidador`, {
+    const response = await authFetch(`${BASE_URL}/caregiver`, {
         method: "DELETE"
     });
 
@@ -81,7 +81,7 @@ export async function desvincularCuidadorPaciente() {
 
 //Actualizar perfil propio del paciente
 export async function actualizarMiPerfil(dto) {
-    const response = await authFetch(`${BASE_URL}/perfil`, {
+    const response = await authFetch(`${BASE_URL}/profile`, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json"

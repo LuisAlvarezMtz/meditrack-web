@@ -77,7 +77,7 @@ export function createPerfilPacienteActions({ elements, state }) {
             name: String(candidate?.name ?? candidate?.nombre ?? "").trim(),
             curp: limpiarTextoOpcional(candidate?.curp ?? candidate?.CURP),
             enfermedadesCronicas: normalizarEnfermedades(
-                candidate?.enfermedadesCronicas ?? candidate?.enfermedades
+                candidate?.chronicDiseases ?? candidate?.enfermedadesCronicas ?? candidate?.enfermedades
             )
         };
     }
@@ -112,8 +112,8 @@ export function createPerfilPacienteActions({ elements, state }) {
             ...paciente,
             name: String(paciente?.name || cache?.name || "").trim(),
             curp: limpiarTextoOpcional(paciente?.curp) || cache?.curp || null,
-            enfermedadesCronicas: normalizarEnfermedades(paciente?.enfermedadesCronicas).length
-                ? normalizarEnfermedades(paciente?.enfermedadesCronicas)
+            enfermedadesCronicas: normalizarEnfermedades(paciente?.chronicDiseases ?? paciente?.enfermedadesCronicas).length
+                ? normalizarEnfermedades(paciente?.chronicDiseases ?? paciente?.enfermedadesCronicas)
                 : normalizarEnfermedades(cache?.enfermedadesCronicas)
         };
     }
@@ -141,7 +141,7 @@ export function createPerfilPacienteActions({ elements, state }) {
     }
 
     function validarDTO(dto) {
-        if (!dto.nombre) {
+        if (!dto.name) {
             notifyError("El nombre es obligatorio");
             return false;
         }
@@ -151,7 +151,7 @@ export function createPerfilPacienteActions({ elements, state }) {
             return false;
         }
 
-        if (Number.isNaN(dto.edad) || dto.edad < 0 || dto.edad > 150) {
+        if (Number.isNaN(dto.age) || dto.age < 0 || dto.age > 150) {
             notifyError("La edad debe ser un número válido");
             return false;
         }

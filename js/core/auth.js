@@ -12,7 +12,7 @@ export function saveSession({ accessToken, refreshToken }) {
         return;
     }
 
-    localStorage.setItem(STORAGE_KEYS.ROLE, payload.rol);
+    localStorage.setItem(STORAGE_KEYS.ROLE, payload.role || payload.rol);
     localStorage.setItem(STORAGE_KEYS.NAME, payload.name);
     startSessionExpiryWatcher();
 }

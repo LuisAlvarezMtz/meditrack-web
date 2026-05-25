@@ -59,7 +59,7 @@ export async function initCuidadorMedicinasPage() {
         onDeleteMedicina: async (id) => actions.eliminarMedicina(id),
         onReminderClick: (id) => {
             const med = state.lista.find(m => String(m.id) === String(id));
-            alarmaModule.abrir(Number(id), med?.nombre || "");
+            alarmaModule.abrir(Number(id), med?.name ?? med?.nombre ?? "");
         }
     });
 

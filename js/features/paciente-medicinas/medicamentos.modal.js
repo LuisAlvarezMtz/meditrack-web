@@ -84,7 +84,7 @@ export function initMedicamentosModal() {
         const isEditing = Boolean(id);
 
         const dto = {
-            nombre: nameInput.value.trim(),
+            name: nameInput.value.trim(),
             dosageForm: dosageFormInput.value,
             expirationDate: expirationDateInput.value
         };
@@ -123,7 +123,7 @@ export function abrirModalEditar(med) {
 
     modalTitle.innerText = "Editar Medicina";
     editIdInput.value = med.id;
-    nameInput.value = med.nombre;
+    nameInput.value = med.name ?? med.nombre ?? "";
     dosageFormInput.value = med.dosageForm;
     expirationDateInput.value =
         med.expirationDate.split("T")[0];

@@ -46,7 +46,7 @@ export async function cargarDatosCuidador(elements) {
             elements.caregiverAvatar.textContent = initials;
         }
 
-        elements.linkCode.textContent = cuidador.codigoVinculacion;
+        elements.linkCode.textContent = cuidador.linkCode ?? cuidador.codigoVinculacion;
     } catch (error) {
         if (esErrorRedFetch(error)) {
             console.warn("Error de red temporal al cargar datos del cuidador.");
@@ -66,8 +66,8 @@ export async function cargarPacientes(elements, handlers = {}) {
 
         const pacientesConDetalle = await Promise.all(
             pacientes.map(async (paciente) => {
-                const enfermedadesLista = Array.isArray(paciente.enfermedadesCronicas)
-                    ? paciente.enfermedadesCronicas
+                const enfermedadesLista = Array.isArray(paciente.chronicDiseases ?? paciente.enfermedadesCronicas)
+                    ? (paciente.chronicDiseases ?? paciente.enfermedadesCronicas)
                     : [];
 
                 if (enfermedadesLista.length > 0) {
@@ -82,7 +82,7 @@ export async function cargarPacientes(elements, handlers = {}) {
 
                     return {
                         ...paciente,
-                        enfermedadesCronicas: detalle.enfermedadesCronicas || []
+                        enfermedadesCronicas: detalle.chronicDiseases ?? detalle.enfermedadesCronicas ?? []
                     };
                 } catch {
                     return {
@@ -117,8 +117,9 @@ export async function registrarPacienteDesdeFormulario(elements, handlers = {}) 
     const dto = {
         name: elements.registerForm.name.value.trim(),
         phoneNumber: elements.registerForm.phoneNumber.value.trim(),
-        edad: Number(elements.registerForm.edad.value),
-        password: elements.registerForm.password.value
+        age: Number(elements.registerForm.edad.value),
+        password: elements.registerForm.password.value,
+        chronicDiseases: []
     };
 
     try {
@@ -161,8 +162,8 @@ async function _cargarStatsAsync(elements, pacientes) {
     let tomasProximas = 0;
     todayResults.forEach(tomas => {
         (Array.isArray(tomas) ? tomas : []).forEach(t => {
-            if (t.estado !== "PENDIENTE") return;
-            const hora = new Date(t.fechaHora);
+            if ((t.status ?? t.estado) !== "PENDING") return;
+            const hora = new Date(t.scheduledAt ?? t.fechaHora);
             if (hora < now) tomasVencidas++;
             else if (hora <= endOfDay) tomasProximas++;
         });

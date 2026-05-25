@@ -21,6 +21,23 @@ let isHistoryInitialized = false;
 
 const urlParams = new URLSearchParams(window.location.search);
 const pacienteId = urlParams.get("pacienteId") || null;
+const STATUS_LABEL = {
+  PENDING: "Pendiente",
+  TAKEN: "Tomada",
+  OMITTED: "Omitida"
+};
+
+function getTakeStatus(item = {}) {
+  return item.status ?? item.estado ?? "";
+}
+
+function getScheduledAt(item = {}) {
+  return item.scheduledAt ?? item.fechaHora ?? "";
+}
+
+function getMedicineName(item = {}) {
+  return item.medicineName ?? item.medicinaNombre ?? "Medicamento";
+}
 
 export function initHistoryView() {
   if (isHistoryInitialized) {
@@ -130,8 +147,9 @@ function renderHistory(data) {
   
   let tomadas = 0, omitidas = 0, pendientes = 0;
   data.forEach(item => {
-    if (item.estado === "TOMADA") tomadas++;
-    else if (item.estado === "OMITIDA") omitidas++;
+    const status = getTakeStatus(item);
+    if (status === "TAKEN") tomadas++;
+    else if (status === "OMITTED") omitidas++;
     else pendientes++;
   });
   
@@ -148,7 +166,7 @@ function renderHistory(data) {
   historyList.style.display = "flex";
   
   const grouped = data.reduce((acc, item) => {
-    const dStr = item.fechaHora.split("T")[0];
+    const dStr = getScheduledAt(item).split("T")[0];
     if (!acc[dStr]) acc[dStr] = [];
     acc[dStr].push(item);
     return acc;
@@ -167,15 +185,16 @@ function renderHistory(data) {
     titleEl.textContent = getRelativeDayName(dateStr);
     groupEl.appendChild(titleEl);
     
-    const items = grouped[dateStr].sort((a, b) => b.fechaHora.localeCompare(a.fechaHora));
+    const items = grouped[dateStr].sort((a, b) => getScheduledAt(b).localeCompare(getScheduledAt(a)));
     
     items.forEach(item => {
-      const timeStr = item.fechaHora.split("T")[1].substring(0, 5);
+      const status = getTakeStatus(item);
+      const timeStr = getScheduledAt(item).split("T")[1].substring(0, 5);
       
       let icon = "⏳";
       let badgeClass = "badge-pendiente";
-      if (item.estado === "TOMADA") { icon = "✅"; badgeClass = "badge-tomada"; }
-      if (item.estado === "OMITIDA") { icon = "❌"; badgeClass = "badge-omitida"; }
+      if (status === "TAKEN") { icon = "OK"; badgeClass = "badge-tomada"; }
+      if (status === "OMITTED") { icon = "X"; badgeClass = "badge-omitida"; }
       
       let shapeText = "";
       if (item.dosageForm) {
@@ -187,10 +206,10 @@ function renderHistory(data) {
       itemEl.innerHTML = `
         <div class="h-item-icon">${icon}</div>
         <div class="h-item-info">
-          <span class="h-item-name">${item.medicinaNombre}<span style="font-weight: normal; color: var(--text-muted);">${shapeText}</span></span>
+          <span class="h-item-name">${getMedicineName(item)}<span style="font-weight: normal; color: var(--text-muted);">${shapeText}</span></span>
         </div>
         <div class="h-item-time">${timeStr}</div>
-        <span class="badge ${badgeClass}">${item.estado}</span>
+        <span class="badge ${badgeClass}">${STATUS_LABEL[status] ?? status}</span>
       `;
       groupEl.appendChild(itemEl);
     });
@@ -215,3 +234,4 @@ function getRelativeDayName(dateStr) {
   const monthName = MESES[d.getMonth()];
   return `${dayName} ${dayNum} de ${monthName}`;
 }
+

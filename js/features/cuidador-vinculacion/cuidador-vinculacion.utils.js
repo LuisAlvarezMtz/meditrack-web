@@ -47,9 +47,11 @@ export function normalizarInfoCuidador(paciente) {
     ).trim();
 
     const codigo = sanitizeCodigoCuidador(
-        cuidador?.codigoVinculacion
+        cuidador?.linkCode
+        || cuidador?.codigoVinculacion
         || cuidador?.codigo
         || paciente?.cuidadorCodigo
+        || paciente?.caregiverCode
         || paciente?.codigoCuidador
         || paciente?.cuidadorCodigoVinculacion
         || ""

@@ -28,8 +28,8 @@ export function renderPerfilCuidador(elements, cuidador, pacientes) {
 
     elements.inputName.value = fullName;
     elements.inputPhone.value = sanitizePhoneValue(cuidador?.phoneNumber || "");
-    elements.inputOcupacion.value = String(cuidador?.ocupacion || "").trim();
-    elements.infoCodigo.textContent = cuidador?.codigoVinculacion || "No disponible";
+    elements.inputOcupacion.value = String(cuidador?.occupation ?? cuidador?.ocupacion ?? "").trim();
+    elements.infoCodigo.textContent = cuidador?.linkCode ?? cuidador?.codigoVinculacion ?? "No disponible";
     elements.infoPacientes.textContent = String(Array.isArray(pacientes) ? pacientes.length : 0);
 }
 
@@ -45,14 +45,14 @@ export function resetPerfilCuidadorForm(elements, cuidador) {
     const fullName = resolveFullName(cuidador);
     elements.inputName.value = fullName;
     elements.inputPhone.value = sanitizePhoneValue(cuidador?.phoneNumber || "");
-    elements.inputOcupacion.value = String(cuidador?.ocupacion || "").trim();
+    elements.inputOcupacion.value = String(cuidador?.occupation ?? cuidador?.ocupacion ?? "").trim();
 }
 
 export function getPerfilCuidadorDTO(elements) {
     return {
         name: String(elements.inputName.value || "").trim(),
         phoneNumber: sanitizePhoneValue(elements.inputPhone.value),
-        ocupacion: String(elements.inputOcupacion.value || "").trim()
+        occupation: String(elements.inputOcupacion.value || "").trim()
     };
 }
 

@@ -42,7 +42,7 @@ export function setPatientHeader(elements, state, paciente = {}) {
     state.pacienteNombre = paciente.name || state.pacienteNombre || "Paciente";
     elements.patientNameTitle.textContent = state.pacienteNombre;
     elements.patientSubtitle.textContent = `Cuidador: ${state.cuidadorNombre}`;
-    elements.patientMeta.textContent = `Edad: ${paciente.edad ?? "--"}`;
+    elements.patientMeta.textContent = `Edad: ${paciente.age ?? paciente.edad ?? "--"}`;
 
     const avatarUrl = `https://ui-avatars.com/api/?name=${encodeURIComponent(state.pacienteNombre)}&background=0D8ABC&color=fff`;
     elements.patientAvatar.src = avatarUrl;
@@ -77,7 +77,7 @@ export function renderMedicinas(elements, lista, alarmasConfig = []) {
 
     lista.forEach((med) => {
         const tieneAlarma = Array.isArray(alarmasConfig)
-            ? alarmasConfig.some(a => Number(a.medicinaId) === Number(med.id))
+            ? alarmasConfig.some(a => Number(a.medicineId ?? a.medicinaId) === Number(med.id))
             : isReminderActive(med);
         const reminderClass = tieneAlarma ? "btn-reminder has-alarm" : "btn-reminder";
         const reminderTitle = tieneAlarma ? "Ver configuración de alarma" : "Configurar alarma";
@@ -88,11 +88,11 @@ export function renderMedicinas(elements, lista, alarmasConfig = []) {
             <button class="btn-delete" data-id="${med.id}" title="Eliminar" type="button">✖</button>
             <div>
                 <span class="type">${med.dosageForm || "-"}</span>
-                <h4>${med.nombre || "-"}</h4>
+                <h4>${med.name ?? med.nombre ?? "-"}</h4>
                 <p class="med-expiration">Expira: ${formatDate(med.expirationDate)}</p>
             </div>
             <div class="card-footer">
-                <span class="registered-by">Registrado por: ${med.registradoPorNombre || "--"}</span>
+                <span class="registered-by">Registrado por: ${med.registeredByName ?? med.registradoPorNombre ?? "--"}</span>
                 <div class="card-actions">
                     <button class="btn-edit" data-id="${med.id}" type="button">✏️</button>
                     <button class="${reminderClass}" data-id="${med.id}" title="${reminderTitle}" type="button">⏰</button>
@@ -135,7 +135,7 @@ export function closeModal(elements) {
 export function fillEditModal(elements, med) {
     elements.modalTitle.textContent = "Editar Medicina";
     elements.editId.value = med.id;
-    elements.name.value = med.nombre || "";
+    elements.name.value = med.name ?? med.nombre ?? "";
     setDosageFormValue(elements, med.dosageForm || "Tableta");
     elements.expirationDate.value = normalizeDateForInput(med.expirationDate);
     _clearFieldErrors(elements);
@@ -145,7 +145,7 @@ export function fillEditModal(elements, med) {
 
 export function getFormPayload(elements) {
     return {
-        nombre: elements.name.value.trim(),
+        name: elements.name.value.trim(),
         dosageForm: elements.dosageForm.value,
         expirationDate: elements.expirationDate.value
     };

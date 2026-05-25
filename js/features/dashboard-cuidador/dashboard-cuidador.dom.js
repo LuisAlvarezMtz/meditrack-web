@@ -140,7 +140,10 @@ function solicitarConfirmacionDesvincular(elements, pacienteNombre) {
 export function renderSidebarStats(elements, pacientes) {
     const total = pacientes.length;
     const conCondiciones = pacientes.filter(
-        p => Array.isArray(p.enfermedadesCronicas) && p.enfermedadesCronicas.length > 0
+        p => {
+            const list = p.chronicDiseases ?? p.enfermedadesCronicas;
+            return Array.isArray(list) && list.length > 0;
+        }
     ).length;
 
     if (elements.statTotalPacientes) elements.statTotalPacientes.textContent = total || "0";
@@ -174,7 +177,7 @@ export function renderPacientes(elements, pacientesConDetalle, handlers = {}) {
             .substring(0, 2)
             .toUpperCase();
 
-        const enfermedades = p.enfermedadesCronicas || [];
+        const enfermedades = p.chronicDiseases ?? p.enfermedadesCronicas ?? [];
 
         const card = document.createElement("div");
         card.className = "patient-card";
@@ -186,7 +189,7 @@ export function renderPacientes(elements, pacientesConDetalle, handlers = {}) {
                         <h4 style="margin: 0;">
                             ${p.name}, 
                             <span class="patient-age-inline">
-                                ${p.edad ?? "N/A"} a\u00f1os
+                                ${p.age ?? p.edad ?? "N/A"} a\u00f1os
                             </span>
                         </h4>
                     </div>

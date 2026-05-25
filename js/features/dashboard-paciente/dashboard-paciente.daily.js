@@ -3,10 +3,10 @@ import { obtenerMisMedicinas } from "../../services/medicina.service.js";
 import { ROUTES } from "../../core/config.js";
 
 const ESTADO = {
-  TOMADA:   { bg: "#dcfce7", color: "#166534", border: "#bbf7d0", label: "Tomada"   },
+  TAKEN:    { bg: "#dcfce7", color: "#166534", border: "#bbf7d0", label: "Tomada"   },
   PROXIMA:  { bg: "#eff6ff", color: "#1d4ed8", border: "#bfdbfe", label: "Pendiente"  },
   ATRASADA: { bg: "#fee2e2", color: "#b91c1c", border: "#fecaca", label: "Atrasada" },
-  OMITIDA:  { bg: "#fee2e2", color: "#b91c1c", border: "#fecaca", label: "Omitida"  }
+  OMITTED:  { bg: "#fee2e2", color: "#b91c1c", border: "#fecaca", label: "Omitida"  }
 };
 
 function _diasRestantes(fechaStr) {
@@ -22,9 +22,21 @@ function _fmtHora(fechaHora) {
   return new Date(fechaHora).toLocaleTimeString("es-MX", { hour: "2-digit", minute: "2-digit" });
 }
 
+function _status(alarma = {}) {
+  return alarma.status ?? alarma.estado ?? "";
+}
+
+function _scheduledAt(alarma = {}) {
+  return alarma.scheduledAt ?? alarma.fechaHora;
+}
+
+function _medicineName(alarma = {}) {
+  return alarma.medicineName ?? alarma.medicinaNombre ?? "Medicamento";
+}
+
 function _estadoInfoSemantic(estado, fechaHora) {
-  if (estado === "TOMADA")  return ESTADO.TOMADA;
-  if (estado === "OMITIDA") return ESTADO.OMITIDA;
+  if (estado === "TAKEN")  return ESTADO.TAKEN;
+  if (estado === "OMITTED") return ESTADO.OMITTED;
   // PENDIENTE: pasada = atrasada, futura = próxima
   return new Date(fechaHora) < new Date() ? ESTADO.ATRASADA : ESTADO.PROXIMA;
 }
@@ -72,8 +84,8 @@ function _renderMetrics(alarmas, medicinas) {
   const el = document.getElementById("dailyMetrics");
   if (!el) return;
 
-  const completadas = alarmas.filter(a => a.estado === "TOMADA").length;
-  const pendientes  = alarmas.filter(a => a.estado === "PENDIENTE").length;
+  const completadas = alarmas.filter(a => _status(a) === "TAKEN").length;
+  const pendientes  = alarmas.filter(a => _status(a) === "PENDING").length;
   const activos     = medicinas.filter(m => {
     const dias = _diasRestantes(m.expirationDate ?? m.fechaFin);
     return dias === null || dias >= 0;
@@ -112,29 +124,29 @@ function _renderTomasHoy(alarmas) {
   }
 
   const total       = alarmas.length;
-  const completadas = alarmas.filter(a => a.estado === "TOMADA").length;
+  const completadas = alarmas.filter(a => _status(a) === "TAKEN").length;
   const pct         = Math.round((completadas / total) * 100);
 
   const sorted = [...alarmas].sort(
-    (a, b) => new Date(a.fechaHora) - new Date(b.fechaHora)
+    (a, b) => new Date(_scheduledAt(a)) - new Date(_scheduledAt(b))
   );
 
   // Prioridad: Próxima/Pendiente primero, luego el resto; cortar a 3
-  const upcoming  = sorted.filter(a => a.estado === "PENDIENTE");
-  const rest      = sorted.filter(a => a.estado !== "PENDIENTE");
+  const upcoming  = sorted.filter(a => _status(a) === "PENDING");
+  const rest      = sorted.filter(a => _status(a) !== "PENDING");
   const visible   = [...upcoming, ...rest].slice(0, 3);
 
   const PILL_SVG = `<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m10.5 20.5 10-10a4.95 4.95 0 1 0-7-7l-10 10a4.95 4.95 0 1 0 7 7Z"/><path d="m8.5 8.5 7 7"/></svg>`;
 
   const cardsHtml = visible
     .map(a => {
-      const e = _estadoInfoSemantic(a.estado, a.fechaHora);
+      const e = _estadoInfoSemantic(_status(a), _scheduledAt(a));
       return `
         <div class="ds-toma-card">
           <div class="ds-toma-icon" style="background:${e.bg};color:${e.color}">${PILL_SVG}</div>
           <div class="ds-toma-info">
-            <div class="ds-toma-nombre">${a.medicinaNombre}</div>
-            <div class="ds-toma-hora-text">${_fmtHora(a.fechaHora)}</div>
+            <div class="ds-toma-nombre">${_medicineName(a)}</div>
+            <div class="ds-toma-hora-text">${_fmtHora(_scheduledAt(a))}</div>
           </div>
           <span class="ds-badge" style="background:${e.bg};color:${e.color};border-color:${e.border}">${e.label}</span>
         </div>`;
@@ -196,7 +208,7 @@ function _renderMedicamentosActivos(medicinas) {
         <div class="ds-med-row">
           <div class="ds-med-dot" style="background:${dotColor}"></div>
           <div class="ds-med-info">
-            <div class="ds-med-nombre">${m.nombre}</div>
+            <div class="ds-med-nombre">${m.name ?? m.nombre}</div>
             <div class="ds-med-meta">${metaParts}</div>
           </div>
           <span class="ds-badge" style="${badgeStyle}">${badge}</span>
@@ -243,7 +255,7 @@ function _renderMedicamentosPorVencer(medicinas) {
       return `
         <div class="ds-exp-row">
           <div class="ds-exp-info">
-            <div class="ds-exp-name">${m.nombre || "Medicamento"}</div>
+            <div class="ds-exp-name">${m.name ?? m.nombre ?? "Medicamento"}</div>
             <div class="ds-exp-meta">${fechaTexto}${m.dosageForm ? ` · ${m.dosageForm}` : ""}</div>
           </div>
           <div class="ds-exp-side">

@@ -2,14 +2,14 @@ import { API_BASE_URL } from "../core/config.js";
 import { authFetch } from "../core/http.js";
 import { extraerMensajeError } from "../utils/http-error.util.js";
 
-const BASE_URL = `${API_BASE_URL}/alarmas`;
+const BASE_URL = `${API_BASE_URL}/alarms`;
 
 /**
  * Crear configuración de alarma
  * @param {Object} dto AlarmaConfigRequestDto
  */
 export async function crearAlarmaConfig(dto) {
-    const response = await authFetch(`${BASE_URL}/crear`, {
+    const response = await authFetch(`${BASE_URL}/create`, {
         method: "POST",
         body: JSON.stringify(dto)
     });
@@ -29,8 +29,8 @@ export async function obtenerMisAlarmasConfig(pacienteId = null) {
     const numericId = pacienteId != null ? Number(pacienteId) : null;
     const hasValidId = numericId !== null && Number.isFinite(numericId) && numericId > 0;
     const url = hasValidId
-        ? `${BASE_URL}/mias?pacienteId=${numericId}`
-        : `${BASE_URL}/mias`;
+        ? `${BASE_URL}/my-configurations?patientId=${numericId}`
+        : `${BASE_URL}/my-configurations`;
     
     const response = await authFetch(url);
     if (!response.ok) {
@@ -46,8 +46,8 @@ export async function obtenerMisAlarmasConfig(pacienteId = null) {
  */
 export async function obtenerAlarmasPorMedicina(medicinaId, pacienteId = null) {
     const url = pacienteId
-        ? `${BASE_URL}/medicina/${medicinaId}?pacienteId=${pacienteId}`
-        : `${BASE_URL}/medicina/${medicinaId}`;
+        ? `${BASE_URL}/medicine/${medicinaId}?patientId=${pacienteId}`
+        : `${BASE_URL}/medicine/${medicinaId}`;
 
     const response = await authFetch(url);
     if (!response.ok) {
@@ -62,8 +62,8 @@ export async function obtenerAlarmasPorMedicina(medicinaId, pacienteId = null) {
  */
 export async function obtenerAlarmasDelDia(pacienteId = null) {
     const url = pacienteId
-        ? `${BASE_URL}/hoy?pacienteId=${pacienteId}`
-        : `${BASE_URL}/hoy`;
+        ? `${BASE_URL}/today?patientId=${pacienteId}`
+        : `${BASE_URL}/today`;
 
     const response = await authFetch(url);
     if (!response.ok) {
@@ -99,7 +99,7 @@ export async function actualizarAlarmaConfig(id, dto) {
  */
 export async function actualizarEstadoAlarma(id, estado) {
     const response = await authFetch(
-        `${BASE_URL}/${id}/estado?estado=${encodeURIComponent(estado)}`,
+        `${BASE_URL}/${id}/status?status=${encodeURIComponent(estado)}`,
         { method: "PATCH" }
     );
 
@@ -131,12 +131,12 @@ export async function eliminarAlarmaConfig(id) {
  * @param {string} fechaFin YYYY-MM-DD (opcional)
  */
 export async function obtenerHistorial(pacienteId = null, fechaInicio = null, fechaFin = null) {
-    let url = `${BASE_URL}/historial`;
+    let url = `${BASE_URL}/history`;
     const params = new URLSearchParams();
     
-    if (pacienteId) params.append("pacienteId", pacienteId);
-    if (fechaInicio) params.append("fechaInicio", fechaInicio);
-    if (fechaFin) params.append("fechaFin", fechaFin);
+    if (pacienteId) params.append("patientId", pacienteId);
+    if (fechaInicio) params.append("startDate", fechaInicio);
+    if (fechaFin) params.append("endDate", fechaFin);
     
     const queryString = params.toString();
     if (queryString) {

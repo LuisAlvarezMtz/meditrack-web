@@ -105,11 +105,11 @@ async function _handleSaveEdit(id) {
 
   try {
     await updateAlarm(id, {
-      medicinaId:      Number(alarm.medId),
-      pacienteId:      Number(cuidadorAlarmasState.pacienteId),
-      fechaInicio:     inicio,
-      fechaFin:        fin,
-      frecuenciaHoras: frecHoras
+      medicineId:      Number(alarm.medId),
+      patientId:       Number(cuidadorAlarmasState.pacienteId),
+      startDate:       inicio,
+      endDate:         fin,
+      frequencyHours:  frecHoras
     });
   } catch {
     if (btn) {
