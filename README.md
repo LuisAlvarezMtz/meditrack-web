@@ -139,7 +139,7 @@ The web client is deployed as a **static site on [Render](https://render.com)**.
 ## 👤 Author
 
 **Luis Angel Alvarez Martinez**
-📧 [angel.alvarez20@hotmail.com](mailto:angel.alvarez20@hotmail.com)
+📧 luisangel.alvarezmtz@gmail.com](mailto:luisangel.alvarezmtz@gmail.com)
 
 ---
 
