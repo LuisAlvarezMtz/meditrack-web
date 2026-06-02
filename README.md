@@ -79,8 +79,16 @@ Users choose their role at registration:
 | `index.html` | Login + role selection modal for registration |
 | `pages/registro-paciente.html` | Patient registration form |
 | `pages/registro-cuidador.html` | Caregiver registration form |
-| `pages/dashboard.html` | Main dashboard after login |
-| *(add more as needed)* | |
+| `pages/dashboard-paciente.html` | Patient main dashboard |
+| `pages/dashboard-cuidador.html` | Caregiver main dashboard |
+| `pages/medicamentos.html` | Medication list and management (patient) |
+| `pages/alarmas.html` | Reminder/alarm management (patient) |
+| `pages/perfil-paciente.html` | Patient profile settings |
+| `pages/perfil-cuidador.html` | Caregiver profile settings |
+| `pages/cuidador-medicinas.html` | Medication view for caregivers |
+| `pages/cuidador-alarmas.html` | Alarm view for caregivers |
+| `pages/cuidador-vinculacion.html` | Patient-caregiver linking management |
+
 
 ---
 
@@ -118,7 +126,7 @@ Then open `http://localhost:3000` in your browser.
 
 The web client is deployed as a **static site on [Render](https://render.com)**.
 
-> 🔗 Live app: `https://your-app.onrender.com` *(update with your actual URL)*
+> 🔗 Live app: `https://meditrackwebappback.onrender.com` 
 
 ---
 
