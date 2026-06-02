@@ -90,7 +90,7 @@ The API base URL is set in the core JS module. To point the client to a differen
 
 ```js
 // js/core/api.js (or equivalent)
-const API_BASE_URL = 'https://your-api.onrender.com';
+const API_BASE_URL = 'https://meditrackwebappback.onrender.com';
 ```
 
 ---
